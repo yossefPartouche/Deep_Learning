@@ -58,6 +58,10 @@ class LinearClassifier:
         np.ndarray
             Array of shape (M,) of predicted class labels.
         """
+        scores = X @ self.W
+        y_pred = np.argmax(scores, axis=1)
+        #print(y_pred)
+        return y_pred
         raise NotImplementedError("predict method must be implemented in subclass")
 
     def calc_accuracy(self, X: np.ndarray, y: np.ndarray) -> float:
@@ -85,8 +89,10 @@ class LinearClassifier:
         ###########################################################################
         #                          START OF YOUR CODE                             #
         ###########################################################################
-  
-  
+        y_pred = self.predict(X)
+        tp_value = np.sum(y_pred == y)
+
+        accuracy = tp_value/y.shape[0]
         ###########################################################################
         #                           END OF YOUR CODE                              #
         ###########################################################################
@@ -149,8 +155,9 @@ class LinearClassifier:
         loss_history = []
         loss = 0.0
         for i in range(num_iters):
-            X_batch = None
-            y_batch = None
+            batch_id = np.random.choice(num_instances, batch_size, replace=False)
+            X_batch = X[batch_id]
+            y_batch = y[batch_id]
             ###########################################################################
             # TODO: Create X_batch and y_batch. Call the loss method to get the loss value  #
             # and grad (the loss function is being override, see the loss             #
@@ -160,10 +167,7 @@ class LinearClassifier:
             ###########################################################################
             #                          START OF YOUR CODE                             #
             ###########################################################################
-     
-     
-     
-     
+            loss, dW = self.loss(X_batch, y_batch)
             ###########################################################################
             #                           END OF YOUR CODE                              #
             ###########################################################################
@@ -173,7 +177,8 @@ class LinearClassifier:
             ###########################################################################
             #                          START OF YOUR CODE                             #                                                         #
             ###########################################################################
-
+            self.W -= learning_rate * dW 
+            loss_history.append(loss)
 
             ###########################################################################
             #                       END OF YOUR CODE                                  #
@@ -224,7 +229,7 @@ class LinearPerceptron(LinearClassifier):
         ###########################################################################
         #                          START OF YOUR CODE                             #
         ###########################################################################
-
+        super().__init__(X, y)
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -245,13 +250,14 @@ class LinearPerceptron(LinearClassifier):
         np.ndarray
             Predicted labels of shape (M,).
         """
-        y_pred = None
+        scores = X @ self.W
         ###########################################################################
         # TODO: Implement this method.                                            #
         ###########################################################################
         #                          START OF YOUR CODE                             #
         ###########################################################################
-    
+        y_pred = np.argmax(scores, axis=1)
+        #print(y_pred)
     
     
         ###########################################################################
@@ -296,11 +302,7 @@ class LogisticRegression(LinearClassifier):
         ###########################################################################
         # TODO: Initialize the model via the base class constructor.              #
         ###########################################################################
-
-
-        ###########################################################################
-        #                           END OF YOUR CODE                              #
-        ###########################################################################
+        super().__init__(X, y)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -317,15 +319,10 @@ class LogisticRegression(LinearClassifier):
             Predicted labels of shape (M,).
         """
         y_pred = None
-        ###########################################################################
-        # TODO: Implement this method.                                                  #
-        ###########################################################################
+        scores = X @ self.W
+        softmax_probs = softmax(scores)
+        y_pred = np.argmax(softmax_probs, axis=1)
 
-
-
-        ###########################################################################
-        #                           END OF YOUR CODE                              #
-        ###########################################################################
         return y_pred
 
     def loss(self, X_batch: np.ndarray, y_batch: np.ndarray):
@@ -392,11 +389,30 @@ def perceptron_loss_naive(W: np.ndarray, X: np.ndarray, y: np.ndarray):
     # After looping over all samples:                                         #
     #   - Average loss and gradient by N                                      #
     #############################################################################
+    print("Number of features", D) # also  X[i].shape
+    print()
+    for i in range(N):
+      # Go through each data instance (containing all its features)
+      # Then calculate the score on each class for THAT instance
+      scores = X[i].dot(W)
+      #print(f"The score of each class from the {i}th instance:  ", scores)
+      #print("The class that should be picked (true class): ", y[i])
+      #print()
+      correct_class_score = scores[y[i]]
+      
+      for j in range(C):
+        # This removes self comparitive cases 
+        # We only care about cases where j != y[i]
+        if j == y[i]:
+          continue
+        if scores[j] >= correct_class_score:
+          loss += (scores[j] - correct_class_score)
 
+          dW[:, j] += X[i]
+          dW[:, y[i]] -= X[i]
 
-
-
-
+      loss /= N
+      dW /= N
     #############################################################################
     #                             END OF YOUR CODE                              #
     #############################################################################
@@ -434,14 +450,31 @@ def softmax_cross_entropy(W: np.ndarray, X: np.ndarray, y: np.ndarray):
 
     #############################################################################
     # TODO: Implement the forward pass.                                         #       #
+    # This typically means: 
+    # 1) Compute the scores
+    # 2) Apply the activation function
     #############################################################################
     #                           START OF YOUR CODE                              #
     #############################################################################
+    for i in range(N):
+        scores = X_use[i].dot(W)
+
+        stable_scores = scores - np.max(scores)
+        #print("score: ", scores)
+        #print("stable score: ", stable_scores)
 
 
+        exp_scores = np.exp(stable_scores)
 
+        probs = exp_scores / np.sum(exp_scores)
+        #print("The stable scores converted to probs: ", probs)
+        
+        correct_class_prob = probs[y[i]]
+        #print("The correct class prob: ", correct_class_prob)
+        #print()
 
-
+        correct_log_likelihood = -np.log(correct_class_prob + 1e-10)
+      
     #############################################################################
     #                            END OF YOUR CODE                               #
     #############################################################################
@@ -453,8 +486,7 @@ def softmax_cross_entropy(W: np.ndarray, X: np.ndarray, y: np.ndarray):
     #############################################################################
     #                           START OF YOUR CODE                              #
     #############################################################################
-
-
+        loss += -np.log(correct_class_prob + 1e-10) 
     #############################################################################
     #                            END OF YOUR CODE                               #
     #############################################################################
@@ -465,9 +497,19 @@ def softmax_cross_entropy(W: np.ndarray, X: np.ndarray, y: np.ndarray):
     #############################################################################
     #                           START OF YOUR CODE                              #
     #############################################################################
+        #print()
+        #print("Backward pass section")
+        dscores = probs
+        #print("dscores: ", dscores)
+        dscores[y[i]] -=1
+        #print("dscores after changing correct class: ", dscores)
+        dW += np.outer(X_use[i], dscores)
+        #print("Change in gradient: ", dW)
+        #print("-------------------------------------------------")
+        #print()
 
-
-
+    loss /= N
+    dW /= N
 
     #############################################################################
     #                            END OF YOUR CODE                               #
@@ -493,11 +535,20 @@ def softmax(x: np.ndarray) -> np.ndarray:
         Row-wise probabilities that sum to 1
     """
     probs = np.zeros_like(x)
-    #############################################################################
-    #                           START OF YOUR CODE                              #
-    #############################################################################
+    # STABILITY TRICK 
+    # We create a vector of the same dimension as the number of samples to extract the max scores for stability
+    # This helps reduce exponential explosion(thus either overfow or underflow)
+    # we maintain dimensions: axis = 0 refers that we search down each column
+    #                         axis = 1 refers that we search/apply an operation across a row
+    max_scores = np.max(x, axis=1, keepdims=True)
 
+    #broadcasting
+    stable_scores = x - max_scores
+    exp_scores = np.exp(stable_scores)
 
+    sum_exp_scores = np.sum(exp_scores, axis=1, keepdims=True)
+
+    probs = exp_scores / sum_exp_scores
 
     #############################################################################
     #                             END OF YOUR CODE                              #
@@ -544,8 +595,9 @@ def softmax_cross_entropy_vectorized(W: np.ndarray, X: np.ndarray, y: np.ndarray
     #############################################################################
     # START OF YOUR CODE                                                        #
     #############################################################################
-
-    pass  # Replace this line with your code
+    raw_scores = X_use @ W 
+    prob_mat = softmax(raw_scores)
+   
 
     #############################################################################
     # END OF YOUR CODE                                                          #
@@ -561,8 +613,11 @@ def softmax_cross_entropy_vectorized(W: np.ndarray, X: np.ndarray, y: np.ndarray
     #############################################################################
     # START OF YOUR CODE                                                        #
     #############################################################################
-
-    pass  # Replace this line with your code
+    row_indicies = np.arange(N)
+    true_probs = prob_mat[row_indicies, y]
+    log_likelihood = -np.log(true_probs + 1e-10)
+    loss = np.sum(log_likelihood)/N
+    
 
     #############################################################################
     # END OF YOUR CODE                                                          #
@@ -577,8 +632,11 @@ def softmax_cross_entropy_vectorized(W: np.ndarray, X: np.ndarray, y: np.ndarray
     #############################################################################
     # START OF YOUR CODE                                                        #
     #############################################################################
+    # the ..._like allows you to choose from a matrix that exists
+    bin_y = np.zeros_like(prob_mat)
+    bin_y[row_indicies, y] = 1
+    dW = (X_use.T @ (prob_mat - bin_y))/N
 
-    pass  # Replace this line with your code
 
     #############################################################################
     # END OF YOUR CODE                                                          #
@@ -652,27 +710,41 @@ def tune_perceptron(
     ############################################################################
 
             
-            # TODO: Create a new model instance
-            # model = ...
-
+    # TODO: Create a new model instance
+    # model = ...
+    best_val = 0.0
+    for rate in learning_rates:
+      for batch in batch_sizes:
+        if verbose: 
+            print(f"\nTrying lr={rate:.1e}, bs={batch}")
+        model = ModelClass(X_train, y_train, **(model_kwargs or {}))
+        loss_hist = model.train(X_train, y_train, rate, num_iters, batch, verbose=False)
             # TODO: Train the model using the provided hyperparameters
             # model.train(...)
 
             # TODO: Compute train and validation accuracy
             # train_acc = ...
             # val_acc = ...
-
+        train_acc = model.calc_accuracy(X_train, y_train)
+        val_acc = model.calc_accuracy(X_val, y_val)
             # TODO: Store the results in the 'results' dictionary
             # results[(lr, batch)] = ...
-
+        results[(rate, batch)] = (train_acc, val_acc)
             # TODO: Update the best model and best_val if this is the best so far
             # if ... :
             #     best_val = ...
             #     best_model = ...
+        if best_val < val_acc: 
+          best_val = val_acc
+          best_model = model
+
+        if verbose:
+                print(f"  Train accuracy: {train_acc:.4f}, Val accuracy: {val_acc:.4f}")
 
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
-
+    print("Best Model: ", best_model)
+    print("Best validation accuracy: ", best_val)
     return results, best_model, best_val
 
