@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files (common in ML projects)
+*.csv
+*.h5
+*.pkl
+*.joblib
+data/
+datasets/
+*.log
+
+# Model files
+*.pth
+*.pt
+*.ckpt
+models/
+checkpoints/
+s
+# Jupyter
+.ipynb_checkpoints/
+
+# xml files
+*.xml
+
+# images for now
+*.jpg
+*.jpeg
+*.png
+
+# Zips
+*.zip
+
+# Text Files
+*.txt
+
+# html Files
+*.html
