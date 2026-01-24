@@ -46,7 +46,6 @@ s
 # images for now
 *.jpg
 *.jpeg
-*.png
 
 # Zips
 *.zip
