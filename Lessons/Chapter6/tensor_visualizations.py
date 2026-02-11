@@ -72,8 +72,8 @@ def visualize_scalar_wrt_vector_simple(n=3):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, step=widgets.IntSlider(min=0, max=n, value=0, 
-                                description='Step:'))
+    widgets.interact(show_step, step=widgets.IntSlider(min=0, max=n, value=0, 
+                                description='Step:'));
 
 def visualize_scalar_wrt_matrix_simple(m=2, n=3):
     """Visualization for scalar w.r.t. matrix."""
@@ -144,8 +144,8 @@ def visualize_scalar_wrt_matrix_simple(m=2, n=3):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n, value=0, 
-                                description='Step:'))
+    widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n, value=0, 
+                                description='Step:'));
 
 def visualize_scalar_wrt_tensor_simple(m=2, n=2, p=3):
     """Visualization for scalar w.r.t. tensor with 3D perspective."""
@@ -254,8 +254,8 @@ def visualize_scalar_wrt_tensor_simple(m=2, n=2, p=3):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n*p, value=0, 
-                                description='Step:'))
+    widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n*p, value=0, 
+                                description='Step:'));
 
 # ==================== VECTOR DERIVATIVES ====================
 
@@ -324,8 +324,8 @@ def visualize_vector_wrt_scalar_simple(m=3):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m, value=0, 
-                                description='Step:'))
+    widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m, value=0, 
+                                description='Step:'));
 
 def visualize_vector_wrt_vector_simple(m=3, n=3):
     """Visualization for vector w.r.t. vector (Jacobian)."""
@@ -397,8 +397,8 @@ def visualize_vector_wrt_vector_simple(m=3, n=3):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n, value=0, 
-                                description='Step:'))
+    widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n, value=0, 
+                                description='Step:'));
 
 def visualize_vector_wrt_matrix_simple(m=2, n=2, p=3):
     """Visualization for vector w.r.t. matrix."""
@@ -478,8 +478,8 @@ def visualize_vector_wrt_matrix_simple(m=2, n=2, p=3):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n*p, value=0, 
-                                description='Step:'))
+    widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n*p, value=0, 
+                                description='Step:'));
 
 def visualize_vector_wrt_tensor_simple(m=2, n=2, p=2, q=2):
     """Visualization for vector w.r.t. 3D tensor with 3D perspective."""
@@ -573,9 +573,9 @@ def visualize_vector_wrt_tensor_simple(m=2, n=2, p=2, q=2):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, 
+    widgets.interact(show_step, 
                                step=widgets.IntSlider(min=0, max=total_steps, value=0, 
-                                                     description='Step:'))
+                                                     description='Step:'));
 
 # ==================== MATRIX DERIVATIVES ====================
 
@@ -649,8 +649,8 @@ def visualize_matrix_wrt_scalar_simple(m=2, n=2):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n, value=0, 
-                                description='Step:'))
+    widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n, value=0, 
+                                description='Step:'));
 
 def visualize_matrix_wrt_vector_simple(m=2, n=2, p=3):
     """Visualization for matrix w.r.t. vector."""
@@ -732,8 +732,8 @@ def visualize_matrix_wrt_vector_simple(m=2, n=2, p=3):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n*p, value=0, 
-                                description='Step:'))
+    widgets.interact(show_step, step=widgets.IntSlider(min=0, max=m*n*p, value=0, 
+                                description='Step:'));
 
 def visualize_matrix_wrt_matrix_simple(m=2, n=2, p=2, q=2):
     """Visualization for matrix w.r.t. matrix (4D tensor)."""
@@ -813,9 +813,9 @@ def visualize_matrix_wrt_matrix_simple(m=2, n=2, p=2, q=2):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, 
+    widgets.interact(show_step, 
                                step=widgets.IntSlider(min=0, max=total_steps, value=0, 
-                                                     description='Step:'))
+                                                     description='Step:'));
 
 def visualize_matrix_wrt_tensor_simple(m=2, n=2, p=2, q=2, r=2):
     """Visualization for matrix w.r.t. 3D tensor with 3D perspective."""
@@ -911,6 +911,6 @@ def visualize_matrix_wrt_tensor_simple(m=2, n=2, p=2, q=2, r=2):
         plt.show()
         plt.close()
     
-    interact = widgets.interact(show_step, 
+    widgets.interact(show_step, 
                                step=widgets.IntSlider(min=0, max=total_steps, value=0, 
-                                                     description='Step:'))
+                                                     description='Step:'));
